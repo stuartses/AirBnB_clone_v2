@@ -57,4 +57,4 @@ Ex:
 * **Miranda Evans** - [Email](mailto:miranda.r.evans@gmail.com)
 * **Kevin Yook** - [Email](mailto:kevin.yook@holbertonschool.com)
 * **Oscar Gomez Toro** - [Email](mailto:oscar-stiven.gomez-toro@holbertonschool.com)
-* **Stuart Echeverry Solarte** - [Email](mailto:stuart.echeverry@holbertonschool.com)
+* **Stuart Echeverry** - [Email](mailto:stuart.echeverry@holbertonschool.com)
