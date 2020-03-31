@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""This is the file storage class for AirBnB"""
+"""This is the file storage class for AirBnB
+"""
 import json
 from models.base_model import BaseModel
 from models.user import User
@@ -20,12 +21,21 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
-        """returns a dictionary
+    def all(self, cls=None):
+        """returns the list of objects of one type of class
         Return:
-            returns a dictionary of __object
+            returns a dictionary of objects
         """
-        return self.__objects
+        dict_obj = {}
+
+        if cls is not None:
+            for item_key in self.__objects.keys():
+                obj_cls = self.__objects[item_key].__class__.__name__
+
+                if obj_cls == cls.__name__:
+                    dict_obj[item_key] = self.__objects[item_key]
+
+        return dict_obj
 
     def new(self, obj):
         """sets __object to given obj
@@ -55,3 +65,12 @@ class FileStorage:
                     self.__objects[key] = value
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """Delete object from __objects dictionary
+        """
+        if obj:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            del(self.__objects[key])
+            # update json file
+            self.save()
