@@ -3,12 +3,29 @@
 import uuid
 import models
 from datetime import datetime
+import sqlalchemy
+from sqlalchemy.ext.declarative import declarative_base
 
+# Define Base class
+Base = declarative_base()
 
 class BaseModel:
     """This class will defines all common attributes/methods
     for other classes
     """
+
+    # class atribute id
+    id = sqlalchemy.Column(
+        sqlalchemy.String(length=60), primary_key=True,
+        default=datetime.utcnow(), nullable=False)
+
+    # class attribute created_at
+    created_at = sqlalchemy.Column(
+        sqlalchemy.DateTime(), nullable=False)
+
+    # class attribute updated_at
+    updated_at = sqlalchemy.Column(
+        sqlalchemy.DateTime(), nullable=False)
 
     def __init__(self, *args, **kwargs):
         """Instantiation of base model class
@@ -29,7 +46,6 @@ class BaseModel:
         else:
             self.id = str(uuid.uuid4())
             self.created_at = self.updated_at = datetime.now()
-            models.storage.new(self)
 
     def __str__(self):
         """returns a string
@@ -48,6 +64,7 @@ class BaseModel:
         """updates the public instance attribute updated_at to current
         """
         self.updated_at = datetime.now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
