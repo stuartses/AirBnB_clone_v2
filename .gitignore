@@ -1,0 +1,8 @@
+*
+!*/
+/*/*cache*
+!*.py
+!*.sql
+!.gitignore
+!README.md
+!AUTHORS
