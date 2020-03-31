@@ -73,4 +73,4 @@ class FileStorage:
             key = "{}.{}".format(type(obj).__name__, obj.id)
             del(self.__objects[key])
             # update json file
-            self.save()
+            # self.save()
