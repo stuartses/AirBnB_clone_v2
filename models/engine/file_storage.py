@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """This is the file storage class for AirBnB
-Stuart Test push
 """
 import json
 from models.base_model import BaseModel
