@@ -71,8 +71,5 @@ class FileStorage:
         """
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
-            try:
-                del(self.__objects[key])
-                self.save()
-            except:
-                pass
+            if key in self.__objects:
+                del self.__objects[key]
