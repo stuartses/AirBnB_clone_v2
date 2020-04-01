@@ -70,8 +70,9 @@ class FileStorage:
         """Delete object from __objects dictionary
         """
         key = "{}.{}".format(type(obj).__name__, obj.id)
-        try:
-            del(self.__objects[key])
-            self.save()
-        except:
-            pass
+        if obj:
+            try:
+                del(self.__objects[key])
+                self.save()
+            except:
+                pass
