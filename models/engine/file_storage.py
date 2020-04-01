@@ -28,13 +28,11 @@ class FileStorage:
         """
         dict_obj = {}
 
-        if cls is not None:
-            for item_key in self.__objects.keys():
-                obj_cls = self.__objects[item_key].__class__.__name__
-
-                if obj_cls == cls.__name__:
-                    dict_obj[item_key] = self.__objects[item_key]
-
+        if cls is None:
+            return self.__objects
+        for item_key, item_value in self.__objects.items():
+            if type(item_value) is cls:
+                dict_obj.update({item_key: item_value})
         return dict_obj
 
     def new(self, obj):
