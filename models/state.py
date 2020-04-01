@@ -14,7 +14,7 @@ class State(BaseModel):
     """
     __tablename__ = "states"
     name = sqlalchemy.Column(sqlalchemy.String(length=128), nullable=False)
-    cities = sqlalchemy.relationship('City', backref='state',
+    cities = sqlalchemy.orm.relationship('City', backref='state',
                                      cascade='all, delete')
 
     @property
