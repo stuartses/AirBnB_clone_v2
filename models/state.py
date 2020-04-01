@@ -6,9 +6,10 @@ from models.city import City
 import sqlalchemy
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """This is the class for State
     Attributes:
+        __tablename__: name of mySQL table
         name: input name
         cities: list of cities in state
     """
