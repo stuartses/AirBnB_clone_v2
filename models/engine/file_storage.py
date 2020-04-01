@@ -69,8 +69,9 @@ class FileStorage:
     def delete(self, obj=None):
         """Delete object from __objects dictionary
         """
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
+        key = "{}.{}".format(type(obj).__name__, obj.id)
+        try:
             del(self.__objects[key])
-            # update json file
-            # self.save()
+            self.save()
+        except:
+            pass
