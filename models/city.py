@@ -15,7 +15,9 @@ class City(BaseModel, Base):
     """
     __tablename__ = "cities"
     name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-    if environ.get('HBNB_TYPE_STORAGE') == "db":
+    state_id = Column(String(60), ForeignKey("states.id"), nullable=False)
+    if environ.get("HBNB_TYPE_STORAGE") == "db":
         state = relationship("State", foreign_keys=[state_id],
                              back_populates="cities")
+        places = relationship("Place", back_populates="cities",
+                              cascade="all, delete, delete-orphan")
