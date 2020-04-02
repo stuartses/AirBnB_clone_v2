@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 """This is the place class"""
 from models.base_model import BaseModel, Base
-import sqlalchemy
+from sqlalchemy import Column, String, ForeignKey, Float, Integer
+from sqlalchemy.orm import relationship
+from os import environ
 
 
 class Place(BaseModel, Base):
@@ -19,54 +21,36 @@ class Place(BaseModel, Base):
         latitude: latitude in flaot
         longitude: longitude in float
         reviews: list of rewiews
-        place_amenities: relationship many to many with Amenity
         amenity_ids: list of Amenity ids
     """
     __tablename__ = "places"
-    city_id = sqlalchemy.Column(sqlalchemy.String(length=60),
-                                sqlalchemy.ForeignKey('cities.id'),
-                                nullable=False)
-    user_id = sqlalchemy.Column(sqlalchemy.String(length=60),
-                                sqlalchemy.ForeignKey('users.id'),
-                                nullable=False)
-    name = sqlalchemy.Column(sqlalchemy.String(length=128),
-                             nullable=False)
-    description = sqlalchemy.Column(sqlalchemy.String(length=1024),
-                                    nullable=False)
-    number_rooms = sqlalchemy.Column(sqlalchemy.Integer, default=0,
-                                     nullable=False)
-    number_bathrooms = sqlalchemy.Column(sqlalchemy.Integer, default=0,
-                                         nullable=False)
-    max_guest = sqlalchemy.Column(sqlalchemy.Integer, default=0,
-                                  nullable=False)
-    price_by_night = sqlalchemy.Column(sqlalchemy.Integer, default=0,
-                                       nullable=False)
-    latitude = sqlalchemy.Column(sqlalchemy.Float,
-                                 nullable=False)
-    longitude = sqlalchemy.Column(sqlalchemy.Float,
-                                  nullable=False)
-    reviews = sqlalchemy.orm.relationship('Review', backref='place',
-                                          cascade='all, delete')
-
-    @property
-    def reviews(self):
-        """getter attribute reviews that returns the list of Review instances
-           with place_id equals to the current Place.id
-        Return:
+    city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
+    user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    name = Column(String(128), nullable=False)
+    description = Column(String(1024), nullable=True)
+    number_rooms = Column(Integer, default=0, nullable=False)
+    number_bathrooms = Column(Integer, default=0, nullable=False)
+    max_guest = Column(Integer, default=0, nullable=False)
+    price_by_night = Column(Integer, default=0, nullable=False)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    if environ.get('HBNB_TYPE_STORAGE') == "db":
+        cities = relationship('City', foreign_keys=[city_id],
+                              back_populates='places')
+        user = relationship('User', foreign_keys=[user_id],
+                            back_populates='places')
+    else:
+        @property
+        def reviews(self):
+            """getter attribute reviews that returns the list of Review instances
+            with place_id equals to the current Place.id
+            Return:
             list of reviews
-        """
-        list_reviews = []
-        all_reviews = models.storage.all(Review)
-        for review_item in all_reviews.items():
-            if review_item.place_id == self.id:
-                list_review.append(review_item)
+            """
+            list_reviews = []
+            all_reviews = models.storage.all(Review)
+            for review_item in all_reviews.items():
+                if review_item.place_id == self.id:
+                    list_review.append(review_item)
 
-        return list_review
-
-    """
-    amenities = sqlalchemy.orm.relationship("Amenity",
-                                            secondary= place_amenity,
-                                            viewonly=False)
-    """
-
-    amenity_ids = []
+            return list_review
