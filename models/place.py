@@ -19,6 +19,7 @@ class Place(BaseModel, Base):
         latitude: latitude in flaot
         longitude: longitude in float
         reviews: list of rewiews
+        place_amenities: relationship many to many with Amenity
         amenity_ids: list of Amenity ids
     """
     __tablename__ = "places"
@@ -61,5 +62,11 @@ class Place(BaseModel, Base):
                 list_review.append(review_item)
 
         return list_review
+
+    """
+    amenities = sqlalchemy.orm.relationship("Amenity",
+                                            secondary= place_amenity,
+                                            viewonly=False)
+    """
 
     amenity_ids = []
