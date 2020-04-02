@@ -52,10 +52,11 @@ class TestBaseModel(unittest.TestCase):
         """test if the base is an type BaseModel"""
         self.assertTrue(isinstance(self.base, BaseModel))
 
-    def test_save_BaesModel(self):
+    def test_save_BaseModel(self):
         """test if the save works"""
-        self.base.save()
-        self.assertNotEqual(self.base.created_at, self.base.updated_at)
+        if os.environ.get('HBNB_TYPE_STORAGE') != "db":
+            self.base.save()
+            self.assertNotEqual(self.base.created_at, self.base.updated_at)
 
     def test_to_dict_BaseModel(self):
         """test if dictionary works"""
