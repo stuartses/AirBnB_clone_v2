@@ -1,17 +1,14 @@
 #!/usr/bin/python3
 """This is the file DBStorage class for AirBnB
 """
-import json
-from models.base_model import BaseModel, State
-# from models.user import User
-# from models.state import State
-# from models.city import City
-# from models.amenity import Amenity
-# from models.place import Place
-# from models.review import Review
 
 import sqlalchemy
-from sqlalchemy import (create_engine)
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from os import environ
+from models import User, State, City, Amenity, Place, Review
+from models.base_model import Base
+
 
 class DBStorage:
     """This class
@@ -25,18 +22,15 @@ class DBStorage:
     def __init__(self):
         """Initializes instance of DBStorage
         """
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                           format(HBNB_MYSQL_USER, HBNB_MYSQL_PWD,
-                                  HBNB_MYSQL_HOST, HBNB_MYSQL_DB
-                           ), pool_pre_ping=True)
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(environ.get('HBNB_MYSQL_USER'),
+                                              environ.get('HBNB_MYSQL_PWD'),
+                                              environ.get('HBNB_MYSQL_HOST'),
+                                              environ.get('HBNB_MYSQL_DB')),
+                                      pool_pre_ping=True)
 
-        if HBNB_ENV == "test":
+        if environ.get('HBNB_ENV') == "test":
             self.__engine.drop_all()
-
-        # create a session
-        Session = sqlalchemy.orm.sessionmaker()
-        Session.configure(bind=engine)
-        self.__session = Session()
 
     def all(self, cls=None):
         """List all data in table
@@ -45,26 +39,17 @@ class DBStorage:
         Return:
             dictionary
         """
-
-        all_list = []
-        all_dict = {}
-        if cls is Not None:
-            all_list = self.__session.query(cls).all()
-            for cls_obj in all_list:
-                key = "{}.{}".format(cls_obj.__class__.__name__, cls_obj.id)
-                all_dict[key] = cls_obj
+        objs_dict = {}
+        objs = []
+        all_objs = [User, State, City, Amenity, Place, Review]
+        if cls:
+            objs = self.__session.query(globals()[cls]).all()
         else:
-            all_list.append(self.__session.query(User).all())
-            all_list.append(self.__session.query(State).all())
-            all_list.append(self.__session.query(City).all())
-            all_list.append(self.__session.query(Amenity).all())
-            all_list.append(self.__session.query(Place).all())
-            all_list.append(self.__session.query(Review).all())
-
-            for query_list in all_list:
-                for cls_obj in query_list:
-                    key = "{}.{}".format(cls_obj.__class__.__name__, cls_obj.id)
-                    all_dict[key] = cls_obj
+            objs = self.__session.query(all_objs).all()
+        for obj in objs:
+            key = "{}.{}".format(obj.__class__.__name__, obj.id)
+            objs_dict[key] = obj
+        return objs_dict
 
     def new(self, obj):
         """Add the object to the current database session
@@ -84,4 +69,11 @@ class DBStorage:
         """
         if obj is not None:
             pass
-        
+
+    def reload(self):
+        """"""
+        Base.metadata.create_all(self.__engine)
+        session_factory = sessionmaker(bind=self.__engine)
+        Session = scoped_session(session_factory)
+        Session.configure(expire_on_commit=False)
+        self.__session = Session()
