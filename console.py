@@ -30,6 +30,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, line):
         """Quit command to exit the program at end of file"""
+        print("")
         return True
 
     def do_create(self, line):
@@ -138,24 +139,17 @@ class HBNBCommand(cmd.Cmd):
         Exceptions:
             NameError: when there is no object taht has the name
         """
-        objects = storage.all()
         my_list = []
-        if not line:
-            for key in objects:
-                my_list.append(objects[key])
-            print(my_list)
-            return
-        try:
-            args = line.split(" ")
-            if args[0] not in self.all_classes:
-                raise NameError()
-            for key in objects:
-                name = key.split('.')
-                if name[0] == args[0]:
-                    my_list.append(objects[key])
-            print(my_list)
-        except NameError:
-            print("** class doesn't exist **")
+        if line:
+            #try:
+            objects = storage.all(line)
+            #except NameError:
+            #    print("** class doesn't exist **")
+        else:
+            objects = storage.all()
+        for value in objects.values():
+            my_list.append(str(value))
+        print(my_list)
 
     def do_update(self, line):
         """Updates an instanceby adding or updating attribute
