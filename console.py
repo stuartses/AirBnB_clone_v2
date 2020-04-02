@@ -44,6 +44,9 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError()
             my_list = line.split(" ")
             param_list = {}
+            if my_list[0] not in self.all_classes:
+                print("** class doesn't exist **")
+                return
             obj_call = globals()[my_list.pop(0)]
             for key, value in (e.split("=") for e in my_list):
                 if value[0] == '"':
@@ -140,12 +143,13 @@ class HBNBCommand(cmd.Cmd):
             NameError: when there is no object taht has the name
         """
         my_list = []
+        obj_list = []
         if line:
             if line not in self.all_classes:
                 print("** class doesn't exist **")
                 return
             else:
-                objects = storage.all(line)
+                objects = storage.all(globals()[line])
         else:
             objects = storage.all()
         for value in objects.values():
