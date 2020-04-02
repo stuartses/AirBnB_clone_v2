@@ -41,7 +41,7 @@ class DBStorage:
         """
         objs_dict = {}
         objs_list = []
-        all_objs = [User, State, City]
+        all_objs = [User, State, City, Amenity, Place, Review]
         if cls:
             objs_list.append(self.__session.query(globals()[cls]).all())
         else:
