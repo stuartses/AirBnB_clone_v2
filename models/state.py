@@ -14,8 +14,10 @@ class State(BaseModel, Base):
         name: input name
         cities: list of cities in state
     """
+
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
+
     if environ.get('HBNB_TYPE_STORAGE') == "db":
         cities = relationship("City", back_populates="state",
                               cascade="all, delete, delete-orphan")
