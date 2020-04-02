@@ -71,7 +71,7 @@ class DBStorage:
             pass
 
     def reload(self):
-        """"""
+        """Creates objects in db and starts a session"""
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine)
         Session = scoped_session(session_factory)
