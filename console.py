@@ -141,7 +141,6 @@ class HBNBCommand(cmd.Cmd):
         """
         my_list = []
         if line:
-            print(line)
             if line not in self.all_classes:
                 print("** class doesn't exist **")
                 return
