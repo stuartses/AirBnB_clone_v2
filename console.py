@@ -141,10 +141,12 @@ class HBNBCommand(cmd.Cmd):
         """
         my_list = []
         if line:
-            #try:
-            objects = storage.all(line)
-            #except NameError:
-            #    print("** class doesn't exist **")
+            print(line)
+            if line not in self.all_classes:
+                print("** class doesn't exist **")
+                return
+            else:
+                objects = storage.all(line)
         else:
             objects = storage.all()
         for value in objects.values():
