@@ -3,6 +3,7 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+from os import environ
 
 
 class User(BaseModel, Base):
@@ -22,10 +23,8 @@ class User(BaseModel, Base):
     password = Column(String(128), nullable=False)
     first_name = Column(String(128), nullable=False)
     last_name = Column(String(128), nullable=False)
-
-    """
-    places = relationship('Place', backref='user',
-                          cascade='all, delete-orphan')
-    reviews = relationship('Review', backref='user',
-                           cascade='all, delete-orphan')
-    """
+    if environ.get('HBNB_TYPE_STORAGE') == "db":
+        places = relationship('Place', back_populates='user',
+                              cascade='all, delete, delete-orphan')
+    #reviews = relationship('Review', backref='user',
+    #                       cascade='all, delete-orphan')
