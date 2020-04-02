@@ -43,7 +43,7 @@ class DBStorage:
         objs_list = []
         all_objs = [User, State, City, Amenity, Place, Review]
         if cls:
-            objs_list.append(self.__session.query(globals()[cls]).all())
+            objs_list.append(self.__session.query(cls).all())
         else:
             for e in all_objs:
                 objs_list.append(self.__session.query(e).all())
