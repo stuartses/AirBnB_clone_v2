@@ -3,7 +3,7 @@
 import uuid
 import models
 from datetime import datetime
-import sqlalchemy
+from sqlalchemy import String, Column, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 # Define Base class
@@ -15,18 +15,10 @@ class BaseModel:
     for other classes
     """
 
-    # class atribute id
-    id = sqlalchemy.Column(
-        sqlalchemy.String(length=60), primary_key=True,
-        default=datetime.utcnow(), nullable=False)
-
-    # class attribute created_at
-    created_at = sqlalchemy.Column(
-        sqlalchemy.DateTime(), nullable=False)
-
-    # class attribute updated_at
-    updated_at = sqlalchemy.Column(
-        sqlalchemy.DateTime(), nullable=False)
+    id = Column(String(length=60), primary_key=True)
+    created_at = Column(DateTime(), nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime(), nullable=False,
+                        default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instantiation of base model class
@@ -38,9 +30,10 @@ class BaseModel:
             created_at: creation date
             updated_at: updated date
         """
+
         if kwargs:
             if "created_at" or "updated_at" not in kwargs.keys():
-                self.created_at = self.updated_at = datetime.now()
+                self.created_at = self.updated_at = datetime.utcnow()
             if "id" not in kwargs.keys():
                 self.id = str(uuid.uuid4())
             for key, value in kwargs.items():
@@ -50,7 +43,7 @@ class BaseModel:
                     setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now()
+            self.created_at = self.updated_at = datetime.utcnow()
 
     def __str__(self):
         """returns a string
@@ -58,7 +51,7 @@ class BaseModel:
             returns a string of class name, id, and dictionary
         """
         return "[{}] ({}) {}".format(
-            type(self).__name__, self.id, self.__dict__)
+            type(self).__name__, self.id, self.to_dict())
 
     def __repr__(self):
         """return a string representaion
@@ -68,7 +61,7 @@ class BaseModel:
     def save(self):
         """updates the public instance attribute updated_at to current
         """
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.utcnow()
         models.storage.new(self)
         models.storage.save()
 
@@ -77,11 +70,12 @@ class BaseModel:
         Return:
             returns a dictionary of all the key values in __dict__
         """
-        my_dict = dict(self.__dict__)
-        my_dict["__class__"] = str(type(self).__name__)
-        my_dict["created_at"] = self.created_at.isoformat()
-        my_dict["updated_at"] = self.updated_at.isoformat()
+        created = self.created_at
+        updated = self.updated_at
 
+        my_dict = dict(self.__dict__)
+        my_dict["created_at"] = created.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        my_dict["updated_at"] = updated.strftime("%Y-%m-%dT%H:%M:%S.%f")
         if "_sa_instance_state" in my_dict.keys():
             del(my_dict["_sa_instance_state"])
 
