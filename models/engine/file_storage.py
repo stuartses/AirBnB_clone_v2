@@ -31,7 +31,7 @@ class FileStorage:
         if cls is None:
             return self.__objects
         for item_key, item_value in self.__objects.items():
-            if item_key.split(".")[0] == cls:
+            if type(item_value) is globals()[cls]:
                 dict_obj.update({item_key: item_value})
         return dict_obj
 
