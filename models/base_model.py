@@ -17,7 +17,8 @@ class BaseModel:
 
     id = Column(String(length=60), primary_key=True)
     created_at = Column(DateTime(), nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime(), nullable=False, onupdate=datetime.utcnow())
+    updated_at = Column(DateTime(), nullable=False,
+                        default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instantiation of base model class
@@ -29,6 +30,7 @@ class BaseModel:
             created_at: creation date
             updated_at: updated date
         """
+
         if kwargs:
             if "created_at" or "updated_at" not in kwargs.keys():
                 self.created_at = self.updated_at = datetime.utcnow()
@@ -68,9 +70,12 @@ class BaseModel:
         Return:
             returns a dictionary of all the key values in __dict__
         """
+        created = self.created_at
+        updated = self.updated_at
+
         my_dict = dict(self.__dict__)
-        my_dict["created_at"] = self.created_at.isoformat()
-        my_dict["updated_at"] = self.updated_at.isoformat()
+        my_dict["created_at"] = created.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        my_dict["updated_at"] = updated.strftime("%Y-%m-%dT%H:%M:%S.%f")
         if "_sa_instance_state" in my_dict.keys():
             del(my_dict["_sa_instance_state"])
 

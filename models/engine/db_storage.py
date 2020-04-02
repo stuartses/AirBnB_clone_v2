@@ -30,7 +30,7 @@ class DBStorage:
                                       pool_pre_ping=True)
 
         if environ.get('HBNB_ENV') == "test":
-            self.__engine.drop_all()
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """List all data in table
@@ -40,15 +40,17 @@ class DBStorage:
             dictionary
         """
         objs_dict = {}
-        objs = []
+        objs_list = []
         all_objs = [User, State, City, Amenity, Place, Review]
         if cls:
-            objs = self.__session.query(globals()[cls]).all()
+            objs_list.append(self.__session.query(globals()[cls]).all())
         else:
-            objs = self.__session.query(all_objs).all()
-        for obj in objs:
-            key = "{}.{}".format(obj.__class__.__name__, obj.id)
-            objs_dict[key] = obj
+            for e in all_objs:
+                objs_list.append(self.__session.query(e).all())
+        for objs in objs_list:
+            for obj in objs:
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                objs_dict[key] = obj
         return objs_dict
 
     def new(self, obj):
@@ -68,7 +70,7 @@ class DBStorage:
         """delete from the current database session obj if not None
         """
         if obj is not None:
-            pass
+            self.__session.delete(obj)
 
     def reload(self):
         """Creates objects in db and starts a session"""
