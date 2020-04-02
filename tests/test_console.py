@@ -2,6 +2,7 @@
 """test for console"""
 import unittest
 from unittest.mock import patch
+import MySQLdb
 from io import StringIO
 import pep8
 import os
@@ -17,6 +18,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 
 
 class TestConsole(unittest.TestCase):
@@ -26,6 +28,12 @@ class TestConsole(unittest.TestCase):
     def setUpClass(cls):
         """setup for the test"""
         cls.consol = HBNBCommand()
+        if os.environ.get('HBNB_TYPE_STORAGE') == "db":
+            cls.db = MySQLdb.connect(user=os.environ.get('HBNB_MYSQL_USER'),
+                                 passwd=os.environ.get('HBNB_MYSQL_PWD'),
+                                 db=os.environ.get('HBNB_MYSQL_DB'),
+                                 port=3306,
+                                 host=os.environ.get('HBNB_MYSQL_HOST'))
 
     @classmethod
     def teardown(cls):
@@ -82,12 +90,19 @@ class TestConsole(unittest.TestCase):
             self.consol.onecmd("create asdfsfsd")
             self.assertEqual(
                 "** class doesn't exist **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("create User")
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all User")
-            self.assertEqual(
-                "[[User]", f.getvalue()[:7])
+        if os.environ.get('HBNB_TYPE_STORAGE') != "db":
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("create User")
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("all User")
+                self.assertEqual("[[User]", f.getvalue()[:7])
+        else:
+            cqry = self.db.cursor()
+            query = 'create User email="gui@hbtn.io" password="guipwd"'
+            self.consol.onecmd(query)
+            before = cqry.execute("""SELECT COUNT(*) FROM users""")
+            print(before)
+            self.assertEqual(before, 1)
 
     def test_show(self):
         """Test show command inpout"""
@@ -132,9 +147,10 @@ class TestConsole(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("all asdfsdfsd")
             self.assertEqual("** class doesn't exist **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all State")
-            self.assertEqual("[]\n", f.getvalue())
+        if os.environ.get('HBNB_TYPE_STORAGE') != "db":
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("all State")
+                self.assertEqual("[]\n", f.getvalue())
 
     def test_update(self):
         """Test update command inpout"""
@@ -173,9 +189,10 @@ class TestConsole(unittest.TestCase):
             self.consol.onecmd("asdfsdfsd.all()")
             self.assertEqual(
                 "** class doesn't exist **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("State.all()")
-            self.assertEqual("[]\n", f.getvalue())
+        if os.environ.get('HBNB_TYPE_STORAGE') != "db":
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("State.all()")
+                self.assertEqual("[]\n", f.getvalue())
 
     def test_z_count(self):
         """Test count command inpout"""
@@ -219,18 +236,19 @@ class TestConsole(unittest.TestCase):
             self.consol.onecmd("User.update(12345)")
             self.assertEqual(
                 "** no instance found **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all User")
-            obj = f.getvalue()
-        my_id = obj[obj.find('(')+1:obj.find(')')]
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("User.update(" + my_id + ")")
-            self.assertEqual(
-                "** attribute name missing **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("User.update(" + my_id + ", name)")
-            self.assertEqual(
-                "** value missing **\n", f.getvalue())
+        if os.environ.get('HBNB_TYPE_STORAGE') != "db":
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("all User")
+                obj = f.getvalue()
+            my_id = obj[obj.find('(')+1:obj.find(')')]
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("User.update(" + my_id + ")")
+                self.assertEqual(
+                    "** attribute name missing **\n", f.getvalue())
+            with patch('sys.stdout', new=StringIO()) as f:
+                self.consol.onecmd("User.update(" + my_id + ", name)")
+                self.assertEqual(
+                    "** value missing **\n", f.getvalue())
 
 if __name__ == "__main__":
     unittest.main()
