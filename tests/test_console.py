@@ -30,10 +30,10 @@ class TestConsole(unittest.TestCase):
         cls.consol = HBNBCommand()
         if os.environ.get('HBNB_TYPE_STORAGE') == "db":
             cls.db = MySQLdb.connect(user=os.environ.get('HBNB_MYSQL_USER'),
-                                 passwd=os.environ.get('HBNB_MYSQL_PWD'),
-                                 db=os.environ.get('HBNB_MYSQL_DB'),
-                                 port=3306,
-                                 host=os.environ.get('HBNB_MYSQL_HOST'))
+                                     passwd=os.environ.get('HBNB_MYSQL_PWD'),
+                                     db=os.environ.get('HBNB_MYSQL_DB'),
+                                     port=3306,
+                                     host=os.environ.get('HBNB_MYSQL_HOST'))
 
     @classmethod
     def teardown(cls):
