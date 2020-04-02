@@ -149,7 +149,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             objects = storage.all()
         for value in objects.values():
-            my_list.append(str(value))
+            my_list.append(value)
         print(my_list)
 
     def do_update(self, line):
