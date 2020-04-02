@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """This is the user class"""
 from models.base_model import BaseModel, Base
-import sqlalchemy
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 
 class User(BaseModel, Base):
@@ -16,15 +17,9 @@ class User(BaseModel, Base):
         reviews: relationship with Review
     """
     __tablename__ = "users"
-    email = sqlalchemy.Column(sqlalchemy.String(length=128),
-                              nullable=False)
-    password = sqlalchemy.Column(sqlalchemy.String(length=128),
-                                 nullable=False)
-    first_name = sqlalchemy.Column(sqlalchemy.String(length=128),
-                                   nullable=False)
-    last_name = sqlalchemy.Column(sqlalchemy.String(length=128),
-                                  nullable=False)
-    places = sqlalchemy.orm.relationship('Place', backref='user',
-                                         cascade='all, delete')
-    reviews = sqlalchemy.orm.relationship('Review', backref='user',
-                                          cascade='all, delete')
+    email = Column(String(length=128), nullable=False)
+    password = Column(String(length=128), nullable=False)
+    first_name = Column(String(length=128), nullable=False)
+    last_name = Column(String(length=128), nullable=False)
+    places = relationship('Place', backref='user', cascade='all, delete')
+    reviews = relationship('Review', backref='user', cascade='all, delete')

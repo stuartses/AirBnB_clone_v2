@@ -9,10 +9,8 @@ from sqlalchemy.orm import relationship
 class City(BaseModel, Base):
     """This is the class for City
     Attributes:
-        __tablename__: name of mySQL table
         state_id: The state id
         name: input name
-        places: relationship with Place
     """
     __tablename__ = "cities"
     name = Column(String(128), nullable=False)
