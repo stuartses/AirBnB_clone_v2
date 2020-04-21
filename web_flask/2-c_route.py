@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 """
-1. HBNB
+2. C is fun!
 Start Execution of Flask web application on 0.0.0.0, port 5000
-With the routes '/' and '/hnbn'
+With the routes '/', '/hnbn' and a text as parameter in url
 """
 
 from flask import Flask
