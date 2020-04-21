@@ -2,7 +2,7 @@
 
 """
 0. Hello Flask!
-Start Execution of Flask on 0.0.0.0, port 5000
+Start Execution of Flask web application on 0.0.0.0, port 5000
 """
 
 from web_flask import app
