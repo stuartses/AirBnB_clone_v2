@@ -3,6 +3,7 @@
 from models.base_model import BaseModel
 from models.base_model import Base
 from models.city import City
+import models
 from sqlalchemy import String, Column
 from sqlalchemy.orm import relationship
 from os import environ
@@ -32,7 +33,7 @@ class State(BaseModel, Base):
             """
             list_cities = []
             all_cities = models.storage.all(City)
-            for city_item in all_cities.items():
+            for id, city_item in all_cities.items():
                 if city_item.state_id == self.id:
                     list_cities.append(city_item)
             return list_cities
