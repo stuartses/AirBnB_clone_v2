@@ -13,12 +13,13 @@
 		  </ul>
 		{%- else %}
 			{%-for state in data if state.id == id %}
-			<h1>State: {{ state.name }}</h1>
-				<ul>
-					{%- for city in state.cities %}
-					<li>{{ city.id }}: <b>{{ city.name }}</b></li>
-					{%- endfor %}
-				</ul>
+		<h1>State: {{ state.name }}</h1>
+		<h3>Cities: {{ state.name }}</h3>
+			<ul>
+				{%- for city in state.cities|sort(attribute="name") %}
+				<li>{{ city.id }}: <b>{{ city.name }}</b></li>
+				{%- endfor %}
+			</ul>
 			{%- else %}
 		<h1>Not found!</h1>
 			{%- endfor %}
